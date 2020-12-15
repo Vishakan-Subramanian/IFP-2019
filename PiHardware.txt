@@ -1,0 +1,7 @@
+Running the Raspberry Pi:
+
+Make sure that the wires are properly connected to the Raspberry Pi.
+Connect the 12V Adapter to the Power Board of the sensors and turn it on.
+Connect the Raspberry Pi to a Powerbank/Laptop/Outlet for its power supply.
+
+Work with the Raspberry Pi remotely using SSH/VNC.

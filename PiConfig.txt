@@ -1,0 +1,12 @@
+Configuring the Raspberry Pi to work remotely on a laptop/PC:
+
+Download MobaXTerm/PuTTY for SSH connectivity
+For VNC, download VNC Viewer.
+
+VNC viewer settings:
+
+Click on File -> New Connection
+VNC Server	:	raspberrypi.local
+Username	:	pi
+Password	:	raspberry
+And click OK to the following Pop-Up messages.
