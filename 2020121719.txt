@@ -1,0 +1,8 @@
+2020-12-17 19:00:00
+MQ_5     = 1%
+MQ_9     = 12%
+MQ_135   = 19%
+Humidity = 83%
+Temp     = 28*C
+Pressure = 985hPa
+Dust     = 2.75ug/m3
