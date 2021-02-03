@@ -31,7 +31,7 @@ library(DiagrammeR)
 
 
 ui <- fluidPage(
-  theme = shinytheme("darkly"),
+  theme = shinytheme("spacelab"),
   
   navbarPage(title = "Air pollution",
              
