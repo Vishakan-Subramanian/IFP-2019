@@ -17,4 +17,3 @@ S Vishakan
 6. If build/push fails, change the stack to Heroku-16/Heroku-18 using the command `heroku stack: set heroku-18` and retry.
 7. Open the link obtained in the terminal after the deployment is done to view the website.
 
-For more queries, reach out to one of us. :smile:
