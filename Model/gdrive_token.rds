@@ -1,4 +1,0 @@
-gs_auth(token = NULL, new_user = FALSE,
-  key = getOption("180734504502-5olavlh0hcffu2mp8pr0f3u6jqhdt19t.apps.googleusercontent.com"),
-  secret = getOption("L70CkxuDFcObQxNWmnAD9PDq"),
-  cache = getOption("googlesheets.httr_oauth_cache"), verbose = TRUE)
