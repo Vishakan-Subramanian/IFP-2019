@@ -28,9 +28,9 @@ library(plotly)
 library(data.table)
 library(flexdashboard)
 library(DiagrammeR)
+library(tseries)
 
-
-ui <- fluidPage(
+ui <- fillPage(
   theme = shinytheme("darkly"),
   
   navbarPage(title = "Air pollution",
@@ -38,9 +38,10 @@ ui <- fluidPage(
              tabPanel("Data Sets", 
                       sidebarLayout(
                         sidebarPanel(
-                          fileInput("file1", "Choose CSV File", accept=c('text/csv', 'text/comma-separated-values', 'text/plain', '.csv')),
+                          #fileInput("file1", "Choose CSV File", accept=c('text/csv', 'text/comma-separated-values', 'text/plain', '.csv')),
                           radioButtons("indata", "Choice:", choices = c("Current Readings", "Columns")),
-                          selectInput("cols", "Choose the variable", choices = "", selected = " ", multiple = TRUE), 
+                          #selectInput("cols", "Choose the variable", choices = "", selected = " ", multiple = TRUE), 
+                          #htmlOutput("variableSelector"),
                           downloadButton('downloaddatset', "Download"),
                           hr(),
                           radioButtons("trans1", "Transformation:", choices = c("Not-Required","standardize")),
@@ -66,7 +67,7 @@ ui <- fluidPage(
                         tabPanel("Summary Statistics",
                                  sidebarLayout(
                                    sidebarPanel(
-                                     selectInput("cols1", "Choose Variable:", choices = "", selected = " ", multiple = TRUE),
+                                     htmlOutput("variableSelector"),
                                      radioButtons("ssoption", "Select Option", choices = c("Summary", "Length", "Dim", "Type of", "Class"))
                                      
                                    ), 
@@ -84,7 +85,10 @@ ui <- fluidPage(
                                  sidebarLayout(
                                    sidebarPanel(
                                      radioButtons("plotoption", "Choose the Option:", choices = c("Histogram", "DensityPlot", "Scatter" )),
-                                     selectInput("cols6", "Choose Varibale 1:", choices = "", selected = " ", multiple = TRUE),
+                                     #selectInput("cols6", "Choose Varibale 1:", choices = "", selected = " ", multiple = TRUE),
+                                     htmlOutput("plotSelector"),
+                                     htmlOutput("plotXSelector"),
+                                     #htmlOutput("plotYSelector"),
                                      textInput("xaxisname", "Write X Axis Name"),
                                      textInput("yaxisname", "Write Y Axis Name"),
                                      textInput("title", "Write Title For the Graph")
@@ -125,10 +129,10 @@ ui <- fluidPage(
                         tabPanel("Random Forests", 
                                  sidebarLayout(
                                    sidebarPanel(
-                                     selectInput("rfvar", "Select Variable", choices = "", selected = ""),
-                                     
+                                     #selectInput("rfvar", "Select Variable", choices = "", selected = ""),
+                                     htmlOutput("rfselector"),
                                      textInput("rfprop", "Select Proportion", value = 0.8, placeholder = "Percentage of rows"),
-                                     radioButtons("rfoption", "Select Method", choices = c("No Option", "Show Prop.", "Train & Test Data", "Importance", "Pred. Accuracy", "Summary")),
+                                     radioButtons("rfoption", "Select Method", choices = c("Show Prop.", "Train & Test Data", "Importance", "Summary")),
                                      hr(),
                                      helpText("Variable selected must be Non NA ."),
                                      hr(),
@@ -146,10 +150,10 @@ ui <- fluidPage(
                         tabPanel("XGBoost",
                                  sidebarLayout(
                                    sidebarPanel(
-                                     selectInput("nbvar", "Select Variable", choices = "", selected = ""),
-                                     
+                                     #selectInput("nbvar", "Select Variable", choices = "", selected = ""),
+                                     htmlOutput("xgselector"),
                                      textInput("nbprop", "Select Proportion", value = 0.8, placeholder = "Percentage of rows"),
-                                     radioButtons("nboption", "Select Method", choices = c("No Option", "Show Prop.", "Train & Test Data", "Importance", "Pred. Accuracy")),
+                                     radioButtons("nboption", "Select Method", choices = c("Show Prop.", "Train & Test Data", "Importance")),
                                      hr(),
                                      helpText("Variable selected must be categorical and numerical."),
                                      hr(),
@@ -187,16 +191,59 @@ server <- function(input, output, session) {
   # for DATASET TAB
   
   data_input <- reactive({
-    infile <- input$file1
-    req(infile)
-    data.frame(read.csv(infile$datapath)) 
+    subset(data.frame(read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQYXopP30E_MZ1Rrce5LZ6-ofjkJ-Kg7ofNu_MPL2LTAKh4O70OOnyH9NQawWkSVuF2qsh_SLsur2hY/pub?gid=0&single=true&output=csv")), select = -c(time))
+    #data.frame(read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQYXopP30E_MZ1Rrce5LZ6-ofjkJ-Kg7ofNu_MPL2LTAKh4O70OOnyH9NQawWkSVuF2qsh_SLsur2hY/pub?gid=0&single=true&output=csv"))
   })
   
-  observeEvent(input$file1,{
-    updateSelectInput(session, inputId = "cols", choices = names(data_input()))
-  }
-  )
+  output$variableSelector <- renderUI({
+    
+    selectInput(
+      inputId = "cols1",
+      label = "Select the Variable: ",
+      choices = names(data_input())
+    )
+    
+  })
   
+  output$plotXSelector <- renderUI({
+    
+    selectInput(
+      inputId = "xselector",
+      label = "Select the X Axis Variable: ",
+      choices = names(data_input())
+    )
+    
+  })
+  
+  output$rfselector <- renderUI({
+    
+    selectInput(
+      inputId = "rfselector",
+      label = "Select the Variable: ",
+      choices = names(data_input())
+    )
+    
+  })
+  
+  output$xgselector <- renderUI({
+    
+    selectInput(
+      inputId = "xgselector",
+      label = "Select the Variable: ",
+      choices = names(data_input())
+    )
+    
+  })
+  
+  # output$plotYSelector <- renderUI({
+  #   
+  #   selectInput(
+  #     inputId = "yselector",
+  #     label = "Select the Y Axis Variable: ",
+  #     choices = names(data_input())
+  #   )
+  #   
+  # })
   logno <- reactive({
     df <- data_input()
     x <- matrix(NA, length(df[, input$cols]), length(df[, input$cols][[1]]))
@@ -245,12 +292,9 @@ server <- function(input, output, session) {
     return(expd)
   })
   
-  
   output$tab1 <- renderTable(
     {
       df <- data_input()
-      
-      
       if (input$indata == "Current Readings"){
         print( tail(df,1))
       }else if(input$indata == "Columns"){
@@ -368,21 +412,18 @@ server <- function(input, output, session) {
   
   # Plots 
   
-  observeEvent(input$file1, {
-    updateSelectInput(session, inputId = "cols6", choices = names(data_input()))
-  }
-  )
   
   output$plot <- renderPlot({
     df <- data_input()
     if(input$plotoption == "Histogram"){
-      ggplot(data = df, aes(x= df[, input$cols6])) +
+      ggplot(data = df, aes(x= df[,input$xselector])) +
         geom_histogram() +
         xlab(input$xaxisname)+
         ylab(input$yaxisname)+
         ggtitle(input$title)
-    } else if(input$plotoption == "DensityPlot"){
-      ggplot(data = df, aes(x= df[, input$cols6]),fill = "lightgray") +
+    } 
+    else if(input$plotoption == "DensityPlot"){
+      ggplot(data = df, aes(x= df[, input$xselector]),fill = "lightgray") +
         geom_density() +
         xlab(input$xaxisname)+
         ylab(input$yaxisname)+
@@ -390,7 +431,7 @@ server <- function(input, output, session) {
         geom_vline(aes(xintercept = mean(input$cols6)), 
                    linetype = "dashed", size = 0.6)
     } else if (input$plotoption == "Scatter"){
-      scatter.smooth(df[, input$cols6], xlab = input$xaxisname, ylab = input$yaxisname, main = input$title)
+      scatter.smooth(df[, input$xselector], xlab = input$xaxisname, ylab = input$yaxisname, main = input$title)
     }
   })
   
@@ -827,10 +868,10 @@ server <- function(input, output, session) {
   
   # RANDOM FOREST
   
-  observeEvent(input$file1, {
-    updateSelectInput(session, inputId = "rfvar", choices = names(data_input()))
-  }
-  )
+  # observeEvent(input$file1, {
+  #   updateSelectInput(session, inputId = "rfvar", choices = names(data_input()))
+  # }
+  # )
   rf_fit <- readRDS("random_forest.rds")
   rfout <- reactive({
     df <- data_input()
@@ -943,7 +984,7 @@ server <- function(input, output, session) {
     }
     
     # train xgb
-    model <- readRDS("xgb.rds")
+    model <- readRDS('xgb.rds')
     
     if (input$nboption == "Fit"){
       return(model)
@@ -1310,7 +1351,7 @@ server <- function(input, output, session) {
     
     str1 <- paste("Srinithyee S K") 
     str2 <- paste("Venkataraman N") 
-    str3 <- paste("Vishakan S") 
+    str3 <- paste("Vishakan") 
     
     str4 <- paste("***********************")
     
@@ -1323,4 +1364,4 @@ server <- function(input, output, session) {
 
 
 
-shinyApp(ui = ui, server = server, options = list(height = 1080))
+shinyApp(ui, server, options = list(height = 1080))
