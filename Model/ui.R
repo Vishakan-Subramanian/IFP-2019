@@ -101,26 +101,26 @@ ui <- fillPage(
                                    )
                                  )
                                  
-                        ),
-                        tabPanel("Correlation", 
-                                 sidebarLayout(
-                                   sidebarPanel(
-                                     selectInput("cols9", "Choose Variable:", choices = "", selected = " ", multiple = TRUE),
-                                     selectInput("cols10", "Choose Variable:", choices = "", selected = " ", multiple = TRUE),
-                                     radioButtons("cormethod", "Select Method:", choices = c("Covariance", "KarlPearson", "Spearman", "Kendals")),
-                                     hr(),
-                                     helpText("For Details Visit:"),
-                                     a(href="https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient", "Karl Pearson Correlation Test"),
-                                     hr()
-                                   ), 
-                                   mainPanel(
-                                     h3("Covariance & Correlation"),
-                                     verbatimTextOutput("cor_t")
-                                   )
-                                   
-                                 )
-                                 
                         )
+                        # tabPanel("Correlation", 
+                        #          sidebarLayout(
+                        #            sidebarPanel(
+                        #              selectInput("cols9", "Choose Variable:", choices = "", selected = " ", multiple = TRUE),
+                        #              selectInput("cols10", "Choose Variable:", choices = "", selected = " ", multiple = TRUE),
+                        #              radioButtons("cormethod", "Select Method:", choices = c("Covariance", "KarlPearson", "Spearman", "Kendals")),
+                        #              hr(),
+                        #              helpText("For Details Visit:"),
+                        #              a(href="https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient", "Karl Pearson Correlation Test"),
+                        #              hr()
+                        #            ), 
+                        #            mainPanel(
+                        #              h3("Covariance & Correlation"),
+                        #              verbatimTextOutput("cor_t")
+                        #            )
+                        #            
+                        #          )
+                        #          
+                        # )
                         
              ),
              
