@@ -1378,7 +1378,7 @@ server <- function(input, output, session) {
     
     str1 <- paste("Srinithyee S K") 
     str2 <- paste("Venkataraman N") 
-    str3 <- paste("Vishakan") 
+    str3 <- paste("Vishakan S") 
     
     str4 <- paste("***********************")
     
