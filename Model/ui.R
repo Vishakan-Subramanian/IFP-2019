@@ -44,7 +44,7 @@ ui <- fillPage(
                           #htmlOutput("variableSelector"),
                           downloadButton('downloaddatset', "Download"),
                           hr(),
-                          radioButtons("trans1", "Transformation:", choices = c("Not-Required","standardize")),
+                          #radioButtons("trans1", "Transformation:", choices = c("Not-Required","standardize")),
                           hr(),
                           helpText("Additional Information:"),
                           helpText("MQ135 : Air Quality Sensor in ppm"),
@@ -124,51 +124,71 @@ ui <- fillPage(
                         
              ),
              
-             navbarMenu("Supervised Learning",
-                        
-                        tabPanel("Random Forests", 
-                                 sidebarLayout(
-                                   sidebarPanel(
-                                     #selectInput("rfvar", "Select Variable", choices = "", selected = ""),
-                                     htmlOutput("rfselector"),
-                                     textInput("rfprop", "Select Proportion", value = 0.8, placeholder = "Percentage of rows"),
-                                     radioButtons("rfoption", "Select Method", choices = c("Show Prop.", "Train & Test Data", "Importance", "Summary")),
-                                     hr(),
-                                     helpText("Variable selected must be Non NA ."),
-                                     hr(),
-                                     a(href="https://en.wikipedia.org/wiki/Random_forest", "Random Forest")
-                                   ),
-                                   mainPanel(
-                                     div(verbatimTextOutput("rfoutput")),
-                                     div(
-                                       plotOutput("rfplot")
-                                     )
-                                     
-                                   )
-                                 )
+             tabPanel("Prediction", 
+                      sidebarLayout(
+                        sidebarPanel(
+                          
+                          helpText("Additional Information:"),
+                          helpText("MQ135 : Air Quality Sensor in ppm"),
+                          helpText("MQ5   : Smoke Sensor in ppm"),
+                          helpText("MQ9   : Carbon Monoxide Sensor in ppm"),
+                          helpText("Humidity in Percentage(%)"),
+                          helpText("Temperature in Celsius(C)"),
+                          helpText("Pressure in Hectopascal Pressure Unit(hPa)"),
+                          helpText("Dust in micrograms per cubic meter(ug/m3)"),
+                          
                         ),
-                        tabPanel("XGBoost",
-                                 sidebarLayout(
-                                   sidebarPanel(
-                                     #selectInput("nbvar", "Select Variable", choices = "", selected = ""),
-                                     htmlOutput("xgselector"),
-                                     textInput("nbprop", "Select Proportion", value = 0.8, placeholder = "Percentage of rows"),
-                                     radioButtons("nboption", "Select Method", choices = c("Show Prop.", "Train & Test Data", "Importance")),
-                                     hr(),
-                                     helpText("Variable selected must be categorical and numerical."),
-                                     hr(),
-                                     a(href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier", "Naive Bayes Classifier")
-                                   ),
-                                   mainPanel(
-                                     div(verbatimTextOutput("nboutput")),
-                                     div(
-                                       plotOutput("xgbplot")
-                                     )
-                                     
-                                   )
-                                 )
-                        )
-             ),
+                        mainPanel(tableOutput("tab2"))
+                      )
+                      
+             ), 
+             
+             
+             # navbarMenu("Supervised Learning",
+             #            
+             #            tabPanel("Random Forests", 
+             #                     sidebarLayout(
+             #                       sidebarPanel(
+             #                         #selectInput("rfvar", "Select Variable", choices = "", selected = ""),
+             #                         htmlOutput("rfselector"),
+             #                         textInput("rfprop", "Select Proportion", value = 0.8, placeholder = "Percentage of rows"),
+             #                         radioButtons("rfoption", "Select Method", choices = c("Show Prop.", "Train & Test Data", "Importance", "Summary")),
+             #                         hr(),
+             #                         helpText("Variable selected must be Non NA ."),
+             #                         hr(),
+             #                         a(href="https://en.wikipedia.org/wiki/Random_forest", "Random Forest")
+             #                       ),
+             #                       mainPanel(
+             #                         div(verbatimTextOutput("rfoutput")),
+             #                         div(
+             #                           plotOutput("rfplot")
+             #                         )
+             #                         
+             #                       )
+             #                     )
+             #            ),
+             #            tabPanel("XGBoost",
+             #                     sidebarLayout(
+             #                       sidebarPanel(
+             #                         #selectInput("nbvar", "Select Variable", choices = "", selected = ""),
+             #                         htmlOutput("xgselector"),
+             #                         textInput("nbprop", "Select Proportion", value = 0.8, placeholder = "Percentage of rows"),
+             #                         radioButtons("nboption", "Select Method", choices = c("Show Prop.", "Train & Test Data", "Importance")),
+             #                         hr(),
+             #                         helpText("Variable selected must be categorical and numerical."),
+             #                         hr(),
+             #                         a(href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier", "Naive Bayes Classifier")
+             #                       ),
+             #                       mainPanel(
+             #                         div(verbatimTextOutput("nboutput")),
+             #                         div(
+             #                           plotOutput("xgbplot")
+             #                         )
+             #                         
+             #                       )
+             #                     )
+             #            )
+             # ),
              
              tabPanel("Contact", 
                       sidebarLayout(
@@ -292,6 +312,13 @@ server <- function(input, output, session) {
     return(expd)
   })
   
+  output$tab2 <- renderTable(
+    {
+      df <-data_input()
+      df1 <-tail(df,6)
+      print(head(df1,1))
+    }
+  )
   output$tab1 <- renderTable(
     {
       df <- data_input()
